@@ -86,13 +86,13 @@ def show_solar_time(stobj):
 
     fig.add_annotation(
         text=f"<span style='font-size:36px; color:gray; font-weight:bold;'>Clock Time {line1}</span><br>"
-             f"<span style='font-size:36px; color:green; font-weight:bold'>True Solar Time {line2}</span><br>",
+             f"<span style='font-size:36px; color:green; font-weight:bold'>Solar Time {line2}</span><br>",
         # text=f"<b>{h:02d}:{m:02d}:{s:02d}</b>", # Using HTML <b> tag to make it bold
         x=0.5, 
         y=0.2,             # Coordinates relative to the canvas (0 to 1)
         xref="paper",
         yref="paper",
-        font=dict(size=48, color="black", family="Arial"),
+        font=dict(size=48, color="black", family="Courier"),
         showarrow=False     # Removes the pointer arrow
     )
     fig.show()
