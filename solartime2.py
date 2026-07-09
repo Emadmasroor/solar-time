@@ -59,3 +59,45 @@ def get_solar_time():
     solar_time = dt.time(h_s,m_s,s_s,ms_s)
     
     return solar_time
+
+def show_solar_time(stobj):
+    degrees_from_sunrise = (-6 + stobj.hour + stobj.minute/60 + stobj.second/3600)/12 * 180
+    line2 = stobj.strftime("%H:%M:%S")
+    line1 = dt.datetime.now().strftime("%H:%M:%S")
+    fig = graphs.Figure(graphs.Indicator(
+    domain = {'x': [0, 1], 'y': [0, 1]},
+    value = degrees_from_sunrise,
+    mode = "gauge",
+    title = {'text': "Altitudinal Solar Time"},
+    gauge = {'axis':
+             {
+                'range': [0, 180],
+                'tickvals': list(range(0,181,15)),
+                'ticktext': [f"{6+val//15}:00" for val in range(0,181,15)],
+                'tickfont': {'size': 16, 'family': 'Arial'},
+                'tickwidth': 2,
+                'tickcolor': "black"
+                
+              },
+             'steps' : [{'range': [0, 180], 'color': "lightgray"}],
+             'threshold' : {'line': {'color': "orange", 'width': 4}, 'thickness': 0.75, 'value': degrees_from_sunrise}}
+    )
+    )
+
+    fig.add_annotation(
+        text=f"<span style='font-size:36px; color:gray; font-weight:bold;'>Clock Time {line1}</span><br>"
+             f"<span style='font-size:36px; color:green; font-weight:bold'>True Solar Time {line2}</span><br>",
+        # text=f"<b>{h:02d}:{m:02d}:{s:02d}</b>", # Using HTML <b> tag to make it bold
+        x=0.5, 
+        y=0.2,             # Coordinates relative to the canvas (0 to 1)
+        xref="paper",
+        yref="paper",
+        font=dict(size=48, color="black", family="Arial"),
+        showarrow=False     # Removes the pointer arrow
+    )
+    fig.show()
+    return None
+
+a = get_solar_time()
+show_solar_time(a)
+    
