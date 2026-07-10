@@ -51,16 +51,20 @@ def get_solar_time(lat, lon, current_time_local=None):
     if alt > 0:
         # it is day time.
         if azm < 0:
+            # 6 AM to 12 PM
             degrees_from_sunrise = alt/highest_altitude_today * 90
         else:
+            # 12 PM to 6 PM
             degrees_from_noon   = (highest_altitude_today - alt)/highest_altitude_today * 90
             degrees_from_sunrise= degrees_from_noon + 90
         fractional_time_hours   = degrees_from_sunrise/15 + 6
     else:
         # it is night time.
         if azm > 0:
+            # 6 PM to 12 AM
             degrees_from_sunset = alt/lowest_altitude_today * 90
         else:
+            # 12 AM to 6 AM
             degrees_from_nadir  = (lowest_altitude_today - alt)/lowest_altitude_today
             degrees_from_sunset = degrees_from_nadir + 90
         fractional_time_hours   = degrees_from_sunset/15 + 18
@@ -110,7 +114,7 @@ def show_solar_time(lat, lon, solartime, clocktime):
              f"<span style='font-size:18px; color:green; font-weight:bold'>Solar Time {line2}</span><br>"
              f"<span style='font-size:14px; color:teal; font-weight:bold'>{line3}</span>",
         x=0.5, 
-        y=1.35,
+        y=0.5,
         xref="paper",
         yref="paper",
         font=dict(family="Courier"),
@@ -120,20 +124,9 @@ def show_solar_time(lat, lon, solartime, clocktime):
     return fig
 
 
-# --- Streamlit UI Setup ---
-st.set_page_config(page_title="Interactive Solar Time", layout="centered")
-
-# 1. Add interactive input widgets to a clean sidebar
-st.sidebar.header("Location")
-st.sidebar.markdown("Enter your coordinates to recalculate solar time. Philadelphia is approximately at (39.9,-75.2)")
-
-# We use number_input so the user can freely type or step through coordinates.
-# Defaults are set to Philadelphia.
-user_lat = st.sidebar.number_input("Latitude", min_value=-90.0, max_value=90.0, value=39.9524, format="%.4f")
-user_lon = st.sidebar.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-75.1636, format="%.4f")
-
-st.title("Solar Clock")
-st.markdown(f"**Location:** {user_lat:.3f}°, {user_lon:.4f}°  \n**Timezone**: {timezone_at(lng=user_lon,lat=user_lat)}")
+# Asia
+user_lat = 25
+user_lon = 100
 
 # The following time is in UTC and is used to calculate things. 
 set_time = dt.datetime.now()
@@ -144,10 +137,4 @@ display_time = get_local_time_from_coords(user_lat, user_lon)
 sol_time = get_solar_time(user_lat, user_lon, set_time)
 figure = show_solar_time(user_lat, user_lon, sol_time, display_time)
 
-# 3. Render the Plotly chart natively (no placeholder block needed anymore)
-st.plotly_chart(figure)
-
-# 4. The Native Streamlit Refresh Loop
-# Wait 10 seconds, then safely restart the script to pull fresh time and new inputs
-time.sleep(10)
-st.rerun()
+figure.show()
