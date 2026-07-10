@@ -4,35 +4,35 @@ import geocoder
 # from zoneinfo import ZoneInfo
 from math import degrees
 import plotly.graph_objects as graphs
+import streamlit as st
+import time
 
+# Get location once at startup
+# @st.cache_data
+def get_my_coordinates():
+    try:
+        # [lat, lon] = geocoder.ip('me').latlng
+        lat = 39.952
+        lon = -75.163
+        return lat, lon
+    except Exception:
+        # Fallback coordinates (e.g., NYC) if the API fails or rate limits you
+        return 39.9524, -75.1636 # Philadelphia
 
-# Calculate current length of a minute
-def get_time_stretch(at_time = dt.datetime.now()):
+# Calculate current length of a second
+def get_time_stretch(lat,lon,at_time = dt.datetime.now()):
     # Calculates the stretch at the time given by at_time
     # by adding one second and looking at the difference
 
-    solartime_0 = get_solar_time(at_time)
-    solartime_1 = get_solar_time(at_time+dt.timedelta(seconds=1))
+    solartime_0 = get_solar_time(lat,lon,at_time)
+    solartime_1 = get_solar_time(lat,lon,at_time+dt.timedelta(seconds=1))
     
     ratio = 1 / ((solartime_1.second + 1e-6 * solartime_1.microsecond) - (solartime_0.second + 1e-6 * solartime_0.microsecond))
 
     return ratio
 
-# Get current GPS coordinates - use sparingly!
-
-##lat = 39.952
-##lon = -75.163
-def get_my_coordinates():
-    try:
-        [lat, lon] = geocoder.ip('me').latlng
-        return lat, lon
-    except Exception:
-        return 39.952,-75.163
-
-def get_solar_time(current_time_local = dt.datetime.now()):
+def get_solar_time(lat,lon,current_time_local = dt.datetime.now()):
     # Calculates the solar time and returns it as a date-time object.
-
-    lat, lon = get_my_coordinates()
     
     # Get sun's current position
     sun_position = get_position(current_time_local, lon, lat)
@@ -89,11 +89,11 @@ def get_solar_time(current_time_local = dt.datetime.now()):
 
     return solar_time
 
-def show_solar_time(solartime,clocktime):
+def show_solar_time(lat,lon,solartime,clocktime):
     
     line1 = clocktime.strftime("%H:%M:%S.%f")[:-4]
     line2 = solartime.strftime("%H:%M:%S.%f")[:-4]
-    line3 = f"1 clock sec = {get_time_stretch(set_time):.2f} solar sec"
+    line3 = f"1 clock sec = {get_time_stretch(lat,lon,set_time):.2f} solar sec"
     
     degrees_from_sunrise = (-6 + solartime.hour + solartime.minute/60 + solartime.second/3600)/12 * 180
 
@@ -133,7 +133,7 @@ def show_solar_time(solartime,clocktime):
              f"<span style='font-size:14px; color:teal; font-weight:bold'>{line3}</span><br>",
         # text=f"<b>{h:02d}:{m:02d}:{s:02d}</b>", # Using HTML <b> tag to make it bold
         x=0.5, 
-        y=1.2,             # Coordinates relative to the canvas (0 to 1)
+        y=1.35,             # Coordinates relative to the canvas (0 to 1)
         xref="paper",
         yref="paper",
         font=dict(family="Courier"),
@@ -142,8 +142,30 @@ def show_solar_time(solartime,clocktime):
 
     return fig
 
-# Call these functions
+# Streamlit
+st.set_page_config(page_title="Solar Time", layout="centered")
+st.title("Solar Time in Philadelphia")
 
-set_time = dt.datetime.now() + dt.timedelta(hours=0)
-sol_time = get_solar_time(set_time)
-show_solar_time(sol_time,set_time).show()
+# Set location
+lat, lon = get_my_coordinates()
+# lat,lon = 40,-80
+
+# --- The Streamlit Loop ---
+
+# 1. Create a dedicated placeholder layout block on the page
+placeholder = st.empty()
+
+# 2. Run the update engine endlessly
+while True:
+    # Recalculate everything
+    set_time = dt.datetime.now() + dt.timedelta(hours=0) # time now
+    sol_time = get_solar_time(lat,lon,set_time) # solar time
+    
+    figure = show_solar_time(lat,lon,sol_time,set_time)
+    
+    # Render the new figure directly inside our placeholder block
+    placeholder.plotly_chart(figure, width=800)
+    
+    # 3. Tell Python to wait 2 seconds before executing the loop again
+    time.sleep(10)
+
