@@ -11,17 +11,13 @@ import plotly.graph_objects as graphs
 [lat, lon] = [39.9524, -75.1636]
 
 # Get current time in UTC, then strip away time zone info. All times are always in UTC.
-current_time = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) # for debugging
+# current_time = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
 
-# Get local time
-t1 = dt.datetime.now()
-h1 = t1.hour
-m1 = t1.minute
-s1 = t1.second
+current_time = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(hours=0) # for debugging
 
 
 # Get sun's current position
-sun_position = get_position(dt.datetime.now(), lon, lat)
+sun_position = get_position(current_time, lon, lat)
 alt = degrees(sun_position["altitude"])
 azm = degrees(sun_position["azimuth"])
 
@@ -37,7 +33,7 @@ highest_altitude_today = degrees(get_position(noon_here, lon, lat)["altitude"])
 lowest_altitude_today  = degrees(get_position(nadir_here, lon, lat)["altitude"])
 
 
-if current_time > sunrise_here:
+if alt > 0 :
     # it is day time.
     time_since_sunrise = current_time - sunrise_here
     length_day = sunset_here - sunrise_here
@@ -76,4 +72,56 @@ ms_s =dt.timedelta(hours=fractional_time_hours).microseconds
 
 solar_time = dt.time(h_s,m_s,s_s,ms_s)
 
-print(solar_time.strftime("%H:%M:%S.%f")[:-4])
+print(f"Local time: {current_time.strftime("%H:%M:%S.%f")[:-4]}")
+print(f"Solar time: {solar_time.strftime("%H:%M:%S.%f")[:-4]}")
+
+def show_solar_time(stobj):
+    degrees_from_sunrise = (-6 + stobj.hour + stobj.minute/60 + stobj.second/3600)/12 * 180
+    line2 = stobj.strftime("%H:%M:%S.%f")[:-4]
+    line1 = dt.datetime.now().strftime("%H:%M:%S.%f")[:-4] # calling it this way ensures it's not in UTC but in correct time zone.
+    
+    fig = graphs.Figure(
+        data = graphs.Scatterpolar(
+            r = [0,1],
+            theta = [2, 180-degrees_from_sunrise],
+            mode = 'markers+lines',
+            marker=dict(
+                color='darkorange',  # Bright orange filled circle
+                size=[0,20]                 # Bigger size
+                ),
+            line=dict(
+            color='black',
+            width=1
+                )
+            )
+        )
+
+    fig.update_layout(
+        showlegend=False,
+        polar=dict(
+            radialaxis=dict(visible=False),
+            angularaxis=dict(
+                tickvals=list(range(0, 361, 15)),
+                ticktext=[f"{(-(val//15) + 18) % 24}:00" for val in range(0, 361, 15)],
+                tickfont=dict(size=16, family="Arial"),
+                gridcolor="rgba(0, 0, 0, 0.05)",  # Makes the radial lines very faint
+                gridwidth=1
+            )
+        )
+    )
+
+    fig.add_annotation(
+        text=f"<span style='font-size:18px; color:gray; font-weight:bold;'>Clock Time {line1}</span><br>"
+             f"<span style='font-size:18px; color:green; font-weight:bold'>Solar Time {line2}</span><br>",
+        # text=f"<b>{h:02d}:{m:02d}:{s:02d}</b>", # Using HTML <b> tag to make it bold
+        x=0.5, 
+        y=1.3,             # Coordinates relative to the canvas (0 to 1)
+        xref="paper",
+        yref="paper",
+        font=dict(family="Courier"),
+        showarrow=False     # Removes the pointer arrow
+    )
+    fig.show()
+    return fig
+
+show_solar_time(solar_time)

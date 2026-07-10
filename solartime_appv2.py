@@ -10,10 +10,12 @@ import time
 # from CoreLocation import CLLocationManager
 
 # Get location once at startup
-@st.cache_data
+# @st.cache_data
 def get_my_coordinates():
     try:
-        [lat, lon] = geocoder.ip('me').latlng
+        # [lat, lon] = geocoder.ip('me').latlng
+        lat = 39.952
+        lon = -75.163
         return lat, lon
     except Exception:
         # Fallback coordinates (e.g., NYC) if the API fails or rate limits you
@@ -80,40 +82,47 @@ def show_solar_time(stobj):
     degrees_from_sunrise = (-6 + stobj.hour + stobj.minute/60 + stobj.second/3600)/12 * 180
     line2 = stobj.strftime("%H:%M:%S.%f")[:-4]
     line1 = dt.datetime.now().strftime("%H:%M:%S.%f")[:-4]
-    fig = graphs.Figure(graphs.Indicator(
-    domain = {'x': [0, 1], 'y': [0, 1]},
-    value = degrees_from_sunrise,
-    mode = "gauge",
-    title = {'text': "Altitudinal Solar Time"},
-    gauge = {'axis':
-             {
-                'range': [0, 180],
-                'tickvals': list(range(0,181,15)),
-                'ticktext': [f"{(6+val//15) % 24}:00" for val in range(0,181,15)],
-                'tickfont': {'size': 16, 'family': 'Arial'},
-                'tickwidth': 2,
-                'tickcolor': "black"
-                
-              },
-             'steps' : [
-                 {'range': [0, 180], 'color': "lightgray"}
-                 ],
-             'threshold' : {'line': {'color': "orange", 'width': 4}, 'thickness': 0.75, 'value': degrees_from_sunrise}}
-    )
-    )
+    
+    fig = graphs.Figure(
+        data = graphs.Scatterpolar(
+            r = [0,1],
+            theta = [2, 180-degrees_from_sunrise],
+            mode = 'markers+lines',
+            marker=dict(
+                color='darkorange',  # Bright orange filled circle
+                size=[0,20]                 # Bigger size
+                ),
+            line=dict(
+            color='black',
+            width=1
+                )
+            )
+        )
 
-    fig.add_annotation(
-        text=f"<span style='font-size:24px; color:gray; font-weight:bold;'>Clock Time {line1}</span><br>"
-             f"<span style='font-size:24px; color:green; font-weight:bold'>Solar Time {line2}</span><br>",
-        # text=f"<b>{h:02d}:{m:02d}:{s:02d}</b>", # Using HTML <b> tag to make it bold
-        x=0.5, 
-        y=0.15,             # Coordinates relative to the canvas (0 to 1)
-        xref="paper",
-        yref="paper",
-        font=dict(size=48, color="black", family="Courier"),
-        showarrow=False     # Removes the pointer arrow
+    fig.update_layout(
+        showlegend=False,
+        polar=dict(
+            radialaxis=dict(visible=False),
+            angularaxis=dict(
+                tickvals=list(range(0, 361, 15)),
+                ticktext=[f"{(-(val//15) + 18) % 24}:00" for val in range(0, 361, 15)],
+                tickfont=dict(size=16, family="Arial"),
+                gridcolor="rgba(0, 0, 0, 0.05)",  # Makes the radial lines very faint
+                gridwidth=1
+            )
+        ),
+        template="plotly_white",
+        polar_sectors=[
+            dict(theta=[0, 90], fillcolor="rgba(230, 242, 255, 0.4)", line_width=0),   # Quad 1 (Light Blue)
+            dict(theta=[90, 180], fillcolor="rgba(230, 255, 230, 0.4)", line_width=0),  # Quad 2 (Light Green)
+            dict(theta=[180, 270], fillcolor="rgba(255, 255, 230, 0.4)", line_width=0), # Quad 3 (Light Yellow)
+            dict(theta=[270, 360], fillcolor="rgba(255, 230, 230, 0.4)", line_width=0)  # Quad 4 (Light Red)
+        ]
     )
     return fig
+
+##solar_time_obj = get_solar_time()
+##show_solar_time(solar_time_obj).show()
 
 # Streamlit
 st.set_page_config(page_title="Solar Time Gauge", layout="centered")
