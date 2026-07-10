@@ -18,8 +18,10 @@ import geocoder
 from math import degrees
 import plotly.graph_objects as graphs
 
-# Get current GPS coordinates
-[lat, lon] = geocoder.ip('me').latlng
+# Get current GPS coordinates - use sparingly!
+
+# [lat, lon] = geocoder.ip('me').latlng
+[lat, lon] = [39.9524, -75.1636]
 
 # Get current time in UTC, then strip away time zone info. All times are always in UTC.
 current_time = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
@@ -43,10 +45,19 @@ key_times = get_times(current_time, lon, lat)
 sunrise_here    = key_times["sunrise"]
 sunset_here     = key_times["sunset"]
 noon_here       = key_times["solar_noon"]
+nadir_here      = key_times["solar_nadir"]
 
+# During the day:
 time_since_sunrise = current_time - sunrise_here
 length_day = sunset_here - sunrise_here
 length_second = length_day.seconds/(12*60*60)
+
+# During the night:
+time_since_sunset = current_time - sunset_here
+length_night = (key_times["sunrise"] - key_times["sunset"]) % dt.timedelta(days=1)
+length_second_night = length_night.seconds/(12*60*60)
+
+
 
 # Fraction of the solar day that has passed.
 fractional_time = time_since_sunrise.seconds/length_day.seconds
@@ -58,15 +69,19 @@ h = tt // 3600
 m = (tt % 3600) // 60
 s = (tt % 60)
 
+# Fraction of the solar night that has passed.
+fractional_time_night = time_since_sunset.seconds/length_night.seconds
+
+
 
 # Some info about the day here
-print(f"We are in {geocoder.ip('me').current_result}")
+# print(f"We are in {geocoder.ip('me').current_result}")
 print(f"The day is {length_day.seconds//60} minutes long.")
 print(f"Each second of UTC solar day time is {length_second:.3f} seconds long on the clock.")
 print(f"We are currently {time_since_sunrise.seconds//60} minutes from sunrise.")
 print(f"1-fractionally, {fractional_time:.3f} of the day has passed")
 print(f"{fractional_time * 12 :.3f} hours out of 12 hours of the day have passed")
-print(f"So the UTC solar time is {h:02d}:{m:02d}:{s:02d}")
+print(f"So the UTC solar day time is {h:02d}:{m:02d}:{s:02d}")
 print("")
 
 # Find out how high the sun is today at solar noon.
