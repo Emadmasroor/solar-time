@@ -165,14 +165,18 @@ with col1:
 with col2:
     st.subheader("About the Solar Clock")
     st.markdown("Traditional clocks don't make sense. Why does the hour hand "
-                "go around twice in one day, but the minute hand only goes around "
-                "once in one hour? Moreover, the numbers on a clock only give "
+                "go around twice in one day, even though the sun goes around an "
+                "earth-based observer once per day? Moreover, the numbers on a clock only give "
                 "you a rough idea of where the sun is.")
     st.markdown("The **solar clock** fixes these issues by using the sun's altitude "
                 "in relation to the current day's solar noon and solar nadir. "
                 "This interpolates diurnal time onto a circle, where 6 AM is always "
                 "sunrise and 6 PM is always sunset. Midnight is truly at midnight (00:00) and "
                 "noon is truly at midday (12:00).")
+    st.markdown("The sun's altitude can be calculated for a given latitude, longitude, and time "
+                "using astronomical equations. Think of this clock like a geographically-aware "
+                "sundial that updates its 'tick' marks dynamically to adjust for the changing "
+                "seasons.")
     st.markdown("In solar time, the length of a second varies throughout the course "
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day and shorter than clock seconds "
