@@ -163,7 +163,7 @@ with col1:
 
 # PANEL 1: Right column handles your long text descriptions
 with col2:
-    st.subheader("About Solar Time")
+    st.subheader("About the Solar Clock")
     st.markdown("Traditional clocks don't make sense. Why does the hour hand "
                 "go around twice in one day, but the minute hand only goes around "
                 "once in one hour? Moreover, the numbers on a clock only give "
