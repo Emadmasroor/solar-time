@@ -140,7 +140,7 @@ st.set_page_config(page_title="Interactive Solar Time", layout="wide")
 st.title("Solar Clock")
 
 # Create the two main panel columns (1 part text panel, 2 parts visualization panel)
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns([2, 1])
 
 # PANEL 2: Left column handles the stacked layout (Plot first, Inputs second)
 with col1:
