@@ -1,6 +1,5 @@
 suncalc
 datetime
-math
 plotly
 streamlit
 time
