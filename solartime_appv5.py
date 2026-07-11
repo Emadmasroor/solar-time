@@ -176,7 +176,7 @@ with col2:
     st.markdown("The sun's altitude (angle above the horizon) can be calculated for a given latitude, longitude, and time "
                 "using astronomical equations. Think of this clock like a geographically-aware "
                 "sundial that updates its 'tick' marks dynamically to adjust for the changing "
-                "seasons.")
+                "hours and seasons.")
     st.markdown("On the solar clock, the length of a second, minute or hour varies throughout the course "
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day and shorter than clock seconds "
