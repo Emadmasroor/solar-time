@@ -171,8 +171,8 @@ with col2:
     st.markdown("The **solar clock** fixes these issues by using the sun's altitude "
                 "in relation to the current day's solar noon and solar nadir. "
                 "This interpolates diurnal time onto a circle, where 6 AM is always "
-                "sunrise and 6 PM is always sunset. Midnight is truly midnight and "
-                "Noon is truly midday.")
+                "sunrise and 6 PM is always sunset. Midnight is truly at midnight (00:00) and "
+                "noon is truly at midday (12:00).")
     st.markdown("In solar time, the length of a second varies throughout the course "
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day, etc.")
