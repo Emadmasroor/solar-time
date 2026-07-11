@@ -160,7 +160,7 @@ with col2:
         user_lon = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-75.1636, format="%.4f")
         
     st.markdown(f"**Detected Timezone**: {timezone_at(lng=user_lon, lat=user_lat)}")
-    st.caption("Philadelphia is roughly (40, -75). Enter any global coordinates to update the tracking zone.")
+    st.caption("Philadelphia is roughly (40, -75).")
 
 # --- Math Calculations Execution ---
 set_time = dt.datetime.now()
@@ -169,7 +169,7 @@ sol_time = get_solar_time(user_lat, user_lon, set_time)
 figure = show_solar_time(user_lat, user_lon, sol_time, display_time)
 
 # Inject the generated figure back up into the top slot of Column 2
-plot_slot.plotly_chart(figure, use_container_width=True)
+plot_slot.plotly_chart(figure)
 
 # Main Native Script Loop
 time.sleep(10)
