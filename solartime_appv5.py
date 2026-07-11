@@ -122,8 +122,8 @@ def show_solar_time(lat, lon, solartime, clocktime):
     )
 
     fig.add_annotation(
-        text=f"<span style='font-size:18px; color:black; font-weight:bold'>Location:</span><br>"
-             f"<span style='font-size:18px; color:black;'>( {user_lat:.3f}°, {user_lon:.4f}° )</span><br>",
+        text=f"<span style='font-size:18px; color:gray; font-weight:bold'>Location:</span><br>"
+             f"<span style='font-size:18px; color:gray;'>( {user_lat:.3f}°, {user_lon:.4f}° )</span><br>",
         x=0.5, 
         y=-0.25,
         xref="paper",
