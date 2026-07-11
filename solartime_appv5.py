@@ -136,7 +136,7 @@ def show_solar_time(lat, lon, solartime, clocktime):
     return fig
 
 # --- Streamlit UI Setup ---
-st.set_page_config(page_title="Interactive Solar Time", layout="wide")
+st.set_page_config(page_title="Solar Clock", layout="wide")
 st.title("Solar Clock")
 
 # Create the two main panel columns (1 part text panel, 2 parts visualization panel)
