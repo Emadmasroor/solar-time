@@ -173,7 +173,7 @@ with col2:
                 "This interpolates diurnal time onto a circle, where 6 AM is always "
                 "sunrise and 6 PM is always sunset. Midnight is truly at midnight (00:00) and "
                 "noon is truly at midday (12:00).")
-    st.markdown("The sun's altitude can be calculated for a given latitude, longitude, and time "
+    st.markdown("The sun's altitude (angle above the horizon) can be calculated for a given latitude, longitude, and time "
                 "using astronomical equations. Think of this clock like a geographically-aware "
                 "sundial that updates its 'tick' marks dynamically to adjust for the changing "
                 "seasons.")
