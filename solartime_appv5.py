@@ -123,35 +123,54 @@ def show_solar_time(lat, lon, solartime, clocktime):
 
     return fig
 
-
 # --- Streamlit UI Setup ---
 st.set_page_config(page_title="Interactive Solar Time", layout="wide")
-
-# 1. Add interactive input widgets to a clean sidebar
-st.sidebar.header("Location")
-st.sidebar.markdown("Enter your coordinates to recalculate solar time. Philadelphia is approximately at (39.9,-75.2)")
-
-# We use number_input so the user can freely type or step through coordinates.
-# Defaults are set to Philadelphia.
-user_lat = st.sidebar.number_input("Latitude", min_value=-90.0, max_value=90.0, value=39.9524, format="%.4f")
-user_lon = st.sidebar.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-75.1636, format="%.4f")
-
 st.title("Solar Clock")
-st.markdown(f"**Location:** {user_lat:.3f}°, {user_lon:.4f}°  \n**Timezone**: {timezone_at(lng=user_lon,lat=user_lat)}")
 
-# The following time is in UTC and is used to calculate things. 
+# Create the two main panel columns (1 part text panel, 2 parts visualization panel)
+col1, col2 = st.columns([1, 2])
+
+# PANEL 1: Left column handles your long text descriptions
+with col1:
+    st.subheader("About Solar Time")
+    st.markdown("Traditional clocks don't make sense. Why do the hands go around twice? "
+                "Moreover, the numbers on a clock only give you a rough idea of "
+                "where the sun is.")
+    st.markdown("The **solar clock** fixes these issues by interpolating diurnal "
+                "time onto a circle, where 6 AM is always sunrise and 6 PM is "
+                "always sunset. Midnight is truly midnight and Noon is truly midday.")
+    st.markdown("In solar time, the length of a second varies throughout the course "
+                "of a day and over the course of the year. In the summer, solar seconds "
+                "are longer than clock seconds during the day, etc.")
+    st.info("The clock updates every 10 seconds.")
+
+# PANEL 2: Right column handles the stacked layout (Plot first, Inputs second)
+with col2:
+    # Reserve the top of column 2 for the plot layout slot
+    plot_slot = st.container()
+    
+    st.write("---")
+    st.subheader("Location Settings")
+    
+    # Nested side-by-side inputs to look neat under the plot
+    sub_col1, sub_col2 = st.columns(2)
+    with sub_col1:
+        user_lat = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=39.9524, format="%.4f")
+    with sub_col2:
+        user_lon = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=-75.1636, format="%.4f")
+        
+    st.markdown(f"**Detected Timezone**: {timezone_at(lng=user_lon, lat=user_lat)}")
+    st.caption("Philadelphia is roughly (40, -75). Enter any global coordinates to update the tracking zone.")
+
+# --- Math Calculations Execution ---
 set_time = dt.datetime.now()
-
-# Display time
 display_time = get_local_time_from_coords(user_lat, user_lon)
-
 sol_time = get_solar_time(user_lat, user_lon, set_time)
 figure = show_solar_time(user_lat, user_lon, sol_time, display_time)
 
-# 3. Render the Plotly chart natively (no placeholder block needed anymore)
-st.plotly_chart(figure)
+# Inject the generated figure back up into the top slot of Column 2
+plot_slot.plotly_chart(figure, use_container_width=True)
 
-# 4. The Native Streamlit Refresh Loop
-# Wait 10 seconds, then safely restart the script to pull fresh time and new inputs
+# Main Native Script Loop
 time.sleep(10)
 st.rerun()
