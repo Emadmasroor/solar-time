@@ -178,7 +178,7 @@ with col2:
                 "are longer than clock seconds during the day, etc.")
     st.info("The clock updates every 10 seconds.")
 
-st.markdown("Powered by ")
+st.markdown("Powered by the calculations behind [suncalc.org](https://suncalc.org)")
 
 
 # --- Math Calculations Execution ---
