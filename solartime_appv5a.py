@@ -85,25 +85,55 @@ def show_solar_time(lat, lon, solartime, clocktime):
     
     degrees_from_sunrise = (-6 + solartime.hour + solartime.minute/60 + solartime.second/3600)/12 * 180
 
-    fig = graphs.Figure(
-        data=graphs.Scatterpolar(
-            r=[0, 1],
-            theta=[2, 180-degrees_from_sunrise],
-            mode='markers+lines',
-            marker=dict(color='darkorange', size=[0, 20]),
-            line=dict(color='black', width=1)
-        )
+    # --- 1. Define the 4 Faint Background Sectors ---
+    # We use rgba() colors with a very low decimal at the end (alpha) for transparency
+    
+    sector_afternoon = graphs.Scatterpolar(
+        r=[0, 1, 1, 0], theta=[0, 0, 90, 90],
+        fill="toself", fillcolor="rgba(255, 195, 0, 0.12)",  # Soft Golden Orange
+        mode="none", showlegend=False
     )
+    
+    sector_morning = graphs.Scatterpolar(
+        r=[0, 1, 1, 0], theta=[90, 90, 180, 180],
+        fill="toself", fillcolor="rgba(255, 240, 150, 0.18)",  # Faint Morning Yellow
+        mode="none", showlegend=False
+    )
+    
+    sector_night = graphs.Scatterpolar(
+        r=[0, 1, 1, 0], theta=[180, 180, 270, 270],
+        fill="toself", fillcolor="rgba(100, 110, 240, 0.12)",  # Deep Midnight Blue
+        mode="none", showlegend=False
+    )
+    
+    sector_evening = graphs.Scatterpolar(
+        r=[0, 1, 1, 0], theta=[270, 270, 360, 360],
+        fill="toself", fillcolor="rgba(30, 144, 255, 0.12)",  # Twilight Blue
+        mode="none", showlegend=False
+    )
+
+    # --- 2. The Clock Hand ---
+    clock_hand = graphs.Scatterpolar(
+        r=[0, 1],
+        theta=[2, 180-degrees_from_sunrise],
+        mode='markers+lines',
+        marker=dict(color='darkorange', size=[0, 20]),
+        line=dict(color='black', width=2)  # Bumped to width=2 to make the hand pop out
+    )
+
+    # --- 3. Assemble the Figure ---
+    # The order here is critical: background shapes go first, hand goes last
+    fig = graphs.Figure(data=[sector_afternoon, sector_morning, sector_night, sector_evening, clock_hand])
 
     fig.update_layout(
         showlegend=False,
         polar=dict(
-            radialaxis=dict(visible=False),
+            radialaxis=dict(visible=False, range=[0, 1]),  # Ensures the background fills the entire radius ring uniformly
             angularaxis=dict(
                 tickvals=list(range(0, 361, 15)),
                 ticktext=[f"{(-(val//15) + 18) % 24}:00" for val in range(0, 361, 15)],
                 tickfont=dict(size=16, family="Arial"),
-                gridcolor="rgba(0, 0, 0, 0.05)",
+                gridcolor="rgba(0, 0, 0, 0.08)",  # Darkened grid slightly so it cuts cleanly through the shadings
                 gridwidth=1
             )
         )
@@ -115,17 +145,6 @@ def show_solar_time(lat, lon, solartime, clocktime):
              f"<span style='font-size:14px; color:teal; font-weight:bold'>{line3}</span>",
         x=0.5, 
         y=1.35,
-        xref="paper",
-        yref="paper",
-        font=dict(family="Courier"),
-        showarrow=False
-    )
-
-    fig.add_annotation(
-        text=f"<span style='font-size:18px; color:black; font-weight:bold'>Location:</span><br>"
-             f"<span style='font-size:18px; color:black;'>( {user_lat:.3f}°, {user_lon:.4f}° )</span><br>",
-        x=0.5, 
-        y=-0.25,
         xref="paper",
         yref="paper",
         font=dict(family="Courier"),
