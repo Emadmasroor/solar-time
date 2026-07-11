@@ -177,7 +177,7 @@ with col2:
                 "using astronomical equations. Think of this clock like a geographically-aware "
                 "sundial that updates its 'tick' marks dynamically to adjust for the changing "
                 "seasons.")
-    st.markdown("In solar time, the length of a second varies throughout the course "
+    st.markdown("On the solar clock, the length of a second, minute or hour varies throughout the course "
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day and shorter than clock seconds "
                 "during the night. Conversely, in the winter, solar seconds are longer in "
