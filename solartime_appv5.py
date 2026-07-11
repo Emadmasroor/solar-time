@@ -122,15 +122,16 @@ def show_solar_time(lat, lon, solartime, clocktime):
     )
 
     fig.add_annotation(
-        text=f"<span style='font-size:18px; color:gray; font-weight:bold'>Location:</span><br>"
-             f"<span style='font-size:18px; color:gray;'>( {user_lat:.3f}°, {user_lon:.4f}° )</span><br>",
-        x=0.5, 
-        y=-0.25,
-        xref="paper",
-        yref="paper",
-        font=dict(family="Courier"),
-        showarrow=False
-    )
+    text=f"<span style='font-size:18px; color:gray; font-weight:bold'>Location: ( {user_lat:.3f}° , {user_lon:.4f}° )</span><br>"
+         f"<span style='font-size:18px; color:gray;'>Date:     {clocktime.strftime('%Y-%m-%d')}</span><br>",
+    x=0.5, 
+    y=-0.25,
+    xref="paper",
+    yref="paper",
+    font=dict(family="Courier"),
+    align="left",
+    showarrow=False
+)
 
     return fig
 
@@ -167,13 +168,17 @@ with col2:
                 "go around twice in one day, but the minute hand only goes around "
                 "once in one hour? Moreover, the numbers on a clock only give "
                 "you a rough idea of where the sun is.")
-    st.markdown("The **solar clock** fixes these issues by interpolating diurnal "
-                "time onto a circle, where 6 AM is always sunrise and 6 PM is "
-                "always sunset. Midnight is truly midnight and Noon is truly midday.")
+    st.markdown("The **solar clock** fixes these issues by using the sun's altitude "
+                "in relation to the current day's solar noon and solar nadir. "
+                "This interpolates diurnal time onto a circle, where 6 AM is always "
+                "sunrise and 6 PM is always sunset. Midnight is truly midnight and "
+                "Noon is truly midday.")
     st.markdown("In solar time, the length of a second varies throughout the course "
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day, etc.")
     st.info("The clock updates every 10 seconds.")
+
+st.markdown("Powered by ")
 
 
 # --- Math Calculations Execution ---
