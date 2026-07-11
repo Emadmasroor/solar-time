@@ -177,7 +177,7 @@ with col2:
                 "of a day and over the course of the year. In the summer, solar seconds "
                 "are longer than clock seconds during the day and shorter than clock seconds "
                 "during the night. Conversely, in the winter, solar seconds are longer in "
-                "the night and shorter in the day."
+                "the night and shorter in the day.")
     st.info("The clock updates every 10 seconds.")
 
 st.markdown("Powered by the calculations behind [suncalc.org](https://suncalc.org).")
