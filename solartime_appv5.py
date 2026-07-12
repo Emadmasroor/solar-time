@@ -81,7 +81,7 @@ def get_solar_time(lat, lon, current_time_local=None):
 def show_solar_time(lat, lon, solartime, clocktime):
     line1 = clocktime.strftime("%H:%M:%S.%f")[:-4]
     line2 = solartime.strftime("%H:%M:%S.%f")[:-4]
-    line3 = f"1 clock sec = {get_time_stretch(lat, lon, clocktime):.2f} solar sec"
+    line3 = f"1 solar clock sec = {get_time_stretch(lat, lon, clocktime):.2f} sec"
     
     degrees_from_sunrise = (-6 + solartime.hour + solartime.minute/60 + solartime.second/3600)/12 * 180
 
